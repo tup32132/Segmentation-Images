@@ -14,6 +14,7 @@ default=current directory
 *str*
 
 COPY_DATA_TO_TARGET: if .dcm and .npy files should be copied from source to target  
+the pipeline has a bad habit of breaking if this is set to True, so please don't (not yet)  
 *True or False*
 
 ### subdirectories - model
