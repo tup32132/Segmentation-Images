@@ -73,6 +73,7 @@ os.makedirs(os.path.join(TARGET_DIR, MODEL_DIR), exist_ok=True)
 
 ### train test split
 
+class UnequalImageMaskError(Exception): pass
 try:
     if SOURCE_DIR:
 
@@ -80,7 +81,6 @@ try:
         msk_fs = [f for f in os.listdir(SOURCE_DIR) if f.endswith('.npy')]
 
         if len(img_fs) != len(msk_fs):
-            class UnequalImageMaskError(Exception): pass
             raise UnequalImageMaskError("image and mask list lengths are not equal")
 except UnequalImageMaskError as uime:
     print(uime)
@@ -116,7 +116,6 @@ if SOURCE_DIR:
     )
 
     if (len(train_img_fs) != len(train_msk_fs)) or (len(val_img_fs) != len(val_msk_fs)):
-        class UnequalImageMaskError(Exception): pass
         raise UnequalImageMaskError("image and mask list lengths are **still** not equal")
     
 
