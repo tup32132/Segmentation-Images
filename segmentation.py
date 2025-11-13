@@ -232,6 +232,13 @@ if __name__ == "__main__":
         default=DEFAULT_SAVE_PATH, 
         help=f"path to save directory (default {DEFAULT_SAVE_PATH})"
     )
+
+    # multiclass model or not
+    parser.add_argument(
+        "-multiclass", 
+        action="store_true", 
+        help=f"enable multiclass model"
+    )
     
     args = parser.parse_args()
 

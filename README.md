@@ -87,5 +87,9 @@ currently, can only read 1-channel .dcm files
 # for segmentation.py
 edit image configs and variables as needed in .py file  
 run from command line  
->>> python segmentation.py path/to/input/image -model path/to/model -save path/to/output/dcm  
+\>\>\> python segmentation.py path/to/input/image -model path/to/model -save path/to/output/dcm  
 saves overlay of original image and model probability as .dcm file  
+
+# for multiclass pipeline
+segmentation.py is not configured to deal with multiclass inputs or outputs  
+model takes images with several masks, each mask corresponding to a different class  
