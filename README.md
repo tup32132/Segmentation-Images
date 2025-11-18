@@ -72,6 +72,10 @@ EPOCHS: number of passes through training set
 allows model to learn features of training set iteratively, too many epochs results in overfit  
 *int*
 
+STEPS_PER_EPOCH: less than or equal to number of training images / batch size
+overrides EPOCHS unless None, causes EPOCHS to repeat the dataset that number of times
+*int*
+
 LAYERS: number of encoder and decoder blocks for unet architecture  
 assume 4, too low and model is a failure, too high and model takes exponentially longer to train  
 *int*

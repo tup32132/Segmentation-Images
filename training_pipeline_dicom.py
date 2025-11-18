@@ -57,6 +57,7 @@ BUFFER_SIZE = 100 # depends on training set size
 
 STEP = 1e-2 # learning rate, default=1e-4
 EPOCHS = 2 # does fewer data mean fewer epochs? default=5? 25?
+STEPS_PER_EPOCH = 3 # should be smaller than or equal to length of dataset / batch size
 LAYERS = 4 # default=4
 
 ### create directories
@@ -222,6 +223,8 @@ else:
 train_dataset = tf.data.Dataset.from_tensor_slices((train_image_paths, train_mask_paths))
 train_dataset = train_dataset.map(load_and_preprocess, num_parallel_calls=tf.data.AUTOTUNE)
 train_dataset = train_dataset.cache() # optional
+if STEPS_PER_EPOCH:
+    train_dataset = train_dataset.repeat(EPOCHS)
 train_dataset = train_dataset.shuffle(BUFFER_SIZE) # unsure how much data you have, hence buffer and batch
 train_dataset = train_dataset.map(augment_data, num_parallel_calls=tf.data.AUTOTUNE)
 train_dataset = train_dataset.batch(BATCH_SIZE)
@@ -316,36 +319,43 @@ def dice_loss(y_true, y_pred, smooth=1e-6):
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=STEP),
     loss=dice_loss,
-    metrics=['accuracy']
+    metrics=['accuracy', 'recall']
 )
 
 ### train model
 
+print(int(train_dataset.cardinality().numpy()))
+print(int(val_dataset.cardinality().numpy()))
 history = model.fit(
     train_dataset, # .take(2)
     validation_data=val_dataset,
     epochs=EPOCHS,
+    steps_per_epoch=STEPS_PER_EPOCH,
 )
 model.save(os.path.join(TARGET_DIR, MODEL_DIR, MODEL))
 
 ### see training
 
-plt.figure(figsize=(12, 5))
+plt.figure(figsize=(12, 10))
 
-plt.subplot(1, 2, 1)
+plt.subplot(2, 2, 1)
 plt.plot(history.history['loss'], label="training loss")
 if 'val_loss' in history.history: 
     plt.plot(history.history['val_loss'], label="validation loss")
 plt.title("dice loss")
 plt.legend()
 
-plt.subplot(1, 2, 2)
+plt.subplot(2, 2, 2)
 plt.plot(history.history['accuracy'], label="training accuracy")
 if 'val_accuracy' in history.history: 
     plt.plot(history.history['val_accuracy'], label="validation accuracy")
 plt.title("pixel accuracy")
 plt.legend()
 
-# plt.savefig("history")
-plt.show()
+plt.subplot(2, 2, 3)
+plt.plot(history.history['recall'], label="training recall")
+if 'val_recall' in history.history: 
+    plt.plot(history.history['val_recall'], label="validation recall")
+plt.title("positive recall")
+plt.legend()
 
